@@ -1,0 +1,11 @@
+.left {
+  width: 65%;
+  min-height: 100vh;
+  background: linear-gradient(90deg, #432B7B 0%, #6A4BBC 100%);
+  /* padding: 1rem 5rem; */
+}
+.form_container {
+  width: 35%;
+  height: 100%;
+  position: relative;
+}

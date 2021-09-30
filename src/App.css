@@ -1,8 +1,11 @@
 @font-face {
   font-family: 'Basis Grotesque Pro';
-  src: local('Basis Grotesque Pro'), url('./Assets/Font/BasisGrotesquePro-Regular.ttf') format('tff');
+  src: local('Basis Grotesque Pro'), url('./Assets/Font/BasisGrotesquePro-Regular.ttf');
 }
 
 body {
   font-family: 'Basis Grotesque Pro'!important;
+}
+* {
+  box-sizing: border-box;
 }
