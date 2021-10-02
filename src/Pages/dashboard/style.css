@@ -1,0 +1,8 @@
+@media (min-width: 900px) {
+  .one {
+    padding-right: 1rem!important;
+  }
+  .two {
+    padding-left: 1rem!important;
+  }
+}

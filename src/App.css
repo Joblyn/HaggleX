@@ -5,7 +5,15 @@
 
 body {
   font-family: 'Basis Grotesque Pro'!important;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
 }
+
 * {
   box-sizing: border-box;
+  transition: ease all .25s;
+}
+
+ul {
+  list-style-type: none;
 }

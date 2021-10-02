@@ -5,6 +5,15 @@
   /* padding: 1rem 5rem; */
 }
 
+@media only screen and (max-width: 768px)  {
+  .left {
+    display: none!important;
+  }
+  .form_container {
+    width: 100%!important;
+  }
+}
+
 .form_container {
   width: 40%;
   min-height: 100vh;
@@ -14,8 +23,8 @@
 
 .form_container .bg_top {
   position: absolute;
-  top: 5%;
-  left: 5%;
+  top: 2%;
+  left: 2%;
   width: 100px;
   min-height: 100px;
   background: #9573ea 0% 0% no-repeat padding-box;
@@ -24,9 +33,9 @@
 }
 
 .form_container .bg_bottom {
-  position: absolute;
-  bottom: 5%;
-  right: 5%;
+  position: fixed;
+  bottom: -2%;
+  right: -2%;
   width: 200px;
   height: 200px;
   background: #B395FF 0% 0% no-repeat padding-box;
