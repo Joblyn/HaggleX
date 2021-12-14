@@ -1,15 +1,24 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  HttpLink
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, HttpLink, from } from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
 
-const link = new HttpLink({
-  uri: "https://api-staging.hagglex.com/graphql"
+const errorLink = onError(({ graphqlErrors, networkError }) => {
+  if (graphqlErrors) {
+    graphqlErrors.map(({ message, location, path }) =>
+      alert(`Graphql error ${message}`)
+    );
+  }
 });
+
+const link = from([
+  errorLink,
+  new HttpLink({
+    uri: "https://api-staging.hagglex.com/graphql"
+  })
+]);
+
 const client = new ApolloClient({
-  link,
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  link
 });
 
 export default client;

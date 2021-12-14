@@ -2,32 +2,41 @@ import React, { useState } from "react";
 import Form from "../../Components/Form";
 import "./style.css";
 import CarouselContainer from "../../Components/Carousel";
-import {
-  gql,
-  useMutation
-} from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 
 const SIGNUP_MUTATION = gql`
-    mutation SigupMutation($input: newUserInput
-    ) {
-      CreateUserInput(input: $input) {
-        email
-        username
-        Password
-        phonenumber
-        referralCode
-        phoneNumberDetails
-        country
-        currency
-        }
-    }
+    mutation register( 
+      $email: String!
+      $username: String!
+      $password: String!
+      $phonenumber: String!
+      $phoneNumberDetails: PhoneNumberDetailsInput  
+      
+        $phonenumber: String!
+        $callingCode: String!
+        $flag: String!
+      
+      $country: String!
+      $currency: String! 
+     ) {
+      register(
+        email: $email
+        username: $username
+        password: $password
+        phonenumber: $phonenumber
+        phoneNumberDetails: $phoneNumberDetails
+        country: $country
+        currency: $currency
+        ) { 
+          user
+          token
+        }}
   `;
 export default function SignUp() {
   const [control, setControl] = useState({
-    referralCode: "1234",
     phoneNumberDetails: "+234",
     country: "Nigeria",
-    currency: "naira"
+    currency: "NGN"
   });
 
   const handleChange = ({ target }) =>
@@ -39,21 +48,28 @@ export default function SignUp() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(control);
-    SigupMutation({
-      variables: { newUser: control }
+    register({
+      variables: {
+        email: control.email,
+        username: control.username,
+        password: control.password,
+        phonenumber: control.phonenumber,
+        phoneNumberDetails: control.phoneNumberDetails,
+        country: control.country,
+        currency: control.currency
+      }
     });
   };
 
-  // const { data, loading, error } = useQuery();
-  const [SigupMutation, newUser] = useMutation(SIGNUP_MUTATION);
+  const [register, newUser] = useMutation(SIGNUP_MUTATION);
   if (newUser.loading) {
-    console.log('loading',newUser.loading);
+    console.log("loading", newUser.loading);
   }
   if (newUser.error) {
-    console.log('error',newUser.error);
+    console.log("error", newUser.error);
   }
   if (newUser.data) {
-    console.log('data',newUser.data);
+    console.log("data", newUser.data);
   }
 
   return (
@@ -101,7 +117,7 @@ export default function SignUp() {
             <Form.Link>Got referral code?</Form.Link>
           </div>
           <div className="mt-2">
-            <Form.Button type="submit" form="sign_up" href="/dashboard">
+            <Form.Button type="submit" form="sign_up">
               Sign Up
             </Form.Button>
             <Form.Text className="text-center mb-5">
