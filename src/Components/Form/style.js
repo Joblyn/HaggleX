@@ -63,7 +63,10 @@ export const Input = styled(Form.Control)`
   }
 `;
 
-export const Error = styled.p``;
+export const Error = styled.p`
+  font-size: 16px;
+  color: red;
+`;
 export const Dropdown = styled.div`
   display: flex;
   flex-direction: row;

@@ -1,60 +1,116 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Form from "../../Components/Form";
 import "./style.css";
 import CarouselContainer from "../../Components/Carousel";
 import { gql, useMutation } from "@apollo/client";
+import { useHistory } from "react-router-dom";
+import CustomToastContainer from "../../Components/Toast";
 
 const SIGNUP_MUTATION = gql`
-    mutation register( 
-      $email: String!
-      $username: String!
-      $password: String!
-      $phonenumber: String!
-      $phoneNumberDetails: PhoneNumberDetailsInput  
-      
-        $phonenumber: String!
-        $callingCode: String!
-        $flag: String!
-      
-      $country: String!
-      $currency: String! 
-     ) {
-      register(
+  mutation registerUser(
+    $email: String!
+    $username: String!
+    $password: String!
+    $phonenumber: String!
+    $referralCode: String
+    $country: String!
+    $currency: String!
+  ) {
+    register(
+      data: {
         email: $email
         username: $username
         password: $password
         phonenumber: $phonenumber
-        phoneNumberDetails: $phoneNumberDetails
         country: $country
         currency: $currency
-        ) { 
-          user
-          token
-        }}
-  `;
+        referralCode: $referralCode
+      }
+    ) {
+      user {
+        _id
+        username
+        profile {
+          displayName
+          dateOfBirth
+        }
+        email
+        phonenumber
+        phoneNumberDetails {
+          phoneNumber
+          callingCode
+          flag
+        }
+        referralCode
+        createdAt
+      }
+      token
+    }
+  }
+`;
 export default function SignUp() {
   const [control, setControl] = useState({
-    phoneNumberDetails: "+234",
     country: "Nigeria",
     currency: "NGN"
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [invalidEmail, setInvalidEmail] = useState();
+  const [invalidPassword, setInvalidPassword] = useState();
+  const [invalidPhone, setInvalidPhone] = useState();
+  const [emptyEmailField, setEmptyEmailField] = useState();
+  const [emptyPasswordField, setEmptyPasswordField] = useState();
+  const [emptyPhoneField, setEmptyPhoneField] = useState();
 
-  const handleChange = ({ target }) =>
+  const handleChange = ({ target }) => {
     setControl({
       ...control,
       [target.name]: target.value
     });
+    const emailRegex = RegExp(
+      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    );
+    const passwordRegex = RegExp(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/
+    );
+    const phonenumberRegex = RegExp(/@"^\d{10}$"/);
+a
+    if (target.name === "email") {
+      target.value !== ""
+        ? target.value.match(emailRegex)
+          ? setInvalidEmail(false)
+          : setInvalidEmail(true)
+        : setInvalidEmail(false);
+      setEmptyEmailField(true);
+    }
+    if (target.name === "password") {
+      target.value !== ""
+        ? target.value.match(passwordRegex)
+          ? setInvalidPassword(false)
+          : setInvalidPassword(true)
+        : setEmptyPasswordField(true);
+      setInvalidPassword(false);
+    }
+    if (target.name === "phonenumber") {
+      target.value !== ""
+        ? target.value.match(phonenumberRegex)
+          ? setInvalidPhone(false)
+          : setInvalidPhone(true)
+        : setEmptyPhoneField(true);
+      setInvalidPhone(false);
+    }
+  };
 
+  const history = useHistory();
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(control);
     register({
       variables: {
         email: control.email,
         username: control.username,
         password: control.password,
         phonenumber: control.phonenumber,
-        phoneNumberDetails: control.phoneNumberDetails,
         country: control.country,
         currency: control.currency
       }
@@ -63,13 +119,17 @@ export default function SignUp() {
 
   const [register, newUser] = useMutation(SIGNUP_MUTATION);
   if (newUser.loading) {
-    console.log("loading", newUser.loading);
+    setLoading(newUser.loading);
+  } else {
+    setLoading(false);
   }
   if (newUser.error) {
     console.log("error", newUser.error);
+    setError(newUser.error.message);
   }
   if (newUser.data) {
-    console.log("data", newUser.data);
+    setShowToast(true);
+    history.push("/verify");
   }
 
   return (
@@ -89,6 +149,12 @@ export default function SignUp() {
               name="email"
               placeholder="example@gmail.com"
             />
+            {/* {(invalidEmail || emptyEmailField) && (
+              <Form.Error>
+                {(invalidEmail && "Invalid email") ||
+                  (emptyEmailField && "Field cannot be empty")}
+              </Form.Error>
+            )} */}
           </Form.Group>
           <Form.Group>
             <Form.Label>Password</Form.Label>
@@ -96,8 +162,15 @@ export default function SignUp() {
               onChange={handleChange}
               type="password"
               name="password"
-              placeholder="*****************"
+              placeholder="*************"
             />
+            {/* {(invalidPassword || emptyPasswordField) && (
+              <Form.Error>
+                {(invalidPassword &&
+                  "Password must be at least 8 characters long, must contain uppercase, must contain symbol.") ||
+                  (emptyPasswordField && "Field cannot be empty")}
+              </Form.Error>
+            )} */}
           </Form.Group>
           <Form.Group>
             <Form.Label>Create username</Form.Label>
@@ -111,13 +184,19 @@ export default function SignUp() {
           <Form.Group>
             <Form.Label>Enter your phone number</Form.Label>
             <Form.Dropdown handleChange={handleChange} />
+            {(invalidPhone || emptyPhoneField) && (
+              <Form.Error>
+                {(invalidPhone && "Invalid phonenumber") ||
+                  (emptyPhoneField && "Field cannot be empty")}
+              </Form.Error>
+            )}
           </Form.Group>
 
           <div className="py-3">
             <Form.Link>Got referral code?</Form.Link>
           </div>
           <div className="mt-2">
-            <Form.Button type="submit" form="sign_up">
+            <Form.Button type="submit" form="sign_up" disabled={loading}>
               Sign Up
             </Form.Button>
             <Form.Text className="text-center mb-5">
@@ -141,6 +220,11 @@ export default function SignUp() {
         </Form>
         <div className="bg_bottom"></div>
       </div>
+      <CustomToastContainer
+        showToast={showToast}
+        type={error ? "error" : "success"}
+        message={error ? error : "Registered Successfully!"}
+      />
     </div>
   );
 }
