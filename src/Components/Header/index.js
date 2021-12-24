@@ -20,6 +20,7 @@ import { ReactComponent as Notification } from "../../Assets/Icons/notification.
 export default function Header({ sideNav, setSideNav, ...props }) {
   const [showNav, setShowNav] = useState(false);
   const history = useHistory();
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
     <Container className="d-flex flex-row justify-content-between align-items-center py-2 px-4 px-md-5" {...props}>
       <Brand className="d-flex flex-row justify-content-center align-items-center" onClick={() => setSideNav(true)}>
@@ -28,7 +29,7 @@ export default function Header({ sideNav, setSideNav, ...props }) {
         </span>
         <span className="name">HaggleX</span>
       </Brand>
-      <Group className="d-flex flex-row align-items-center px-md-5 px-sm-3">
+      {user?.token && <Group className="d-flex flex-row align-items-center px-md-5 px-sm-3">
         <Icon className="px-md-5 px-3">
           <Notification className="notif_icon" />
         </Icon>
@@ -52,7 +53,7 @@ export default function Header({ sideNav, setSideNav, ...props }) {
             </Ul>
           </Nav>
         </Profile>
-      </Group>
+      </Group>}
     </Container>
   );
 }

@@ -72,7 +72,7 @@ export default function SignIn({ isAuthenticated, setIsAuthenticated }) {
   if (user.data) {
     setIsAuthenticated(true);
     localStorage.setItem("user", JSON.stringify(user.data));
-    history.push("/");
+    history.push("/dashboard");
   }
 
   return (

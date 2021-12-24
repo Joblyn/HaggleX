@@ -5,6 +5,7 @@ import Layout from "./Layout";
 import Dashboard from "./Pages/dashboard";
 import Wallet from "./Pages/wallet";
 import SignUp from "./Pages/signup";
+import Verify from "./Pages/verify";
 import SignIn from "./Pages/signin";
 import { ApolloProvider } from "@apollo/client";
 import client from "./client";
@@ -18,10 +19,30 @@ function App() {
       <Router>
         <Switch>
           <Route exact path="/" component={SignUp} />
-          <Route path="/sign_in" component={() => <SignIn isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>} />
+          <Route
+            path="/sign_in"
+            component={() => (
+              <SignIn
+                isAuthenticated={isAuthenticated}
+                setIsAuthenticated={setIsAuthenticated}
+              />
+            )}
+          />
+          <Route 
+            path="/verify"
+            component={Verify}
+          />
           <Layout>
             <Switch>
-              <Route path="/dashboard" component={() => <Dashboard isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>} />
+              <Route
+                path="/dashboard"
+                component={() => (
+                  <Dashboard
+                    isAuthenticated={isAuthenticated}
+                    setIsAuthenticated={setIsAuthenticated}
+                  />
+                )}
+              />
               <Route path="/wallet" component={Wallet} />
             </Switch>
           </Layout>

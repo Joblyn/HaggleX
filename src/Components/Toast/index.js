@@ -1,10 +1,11 @@
 import React from "react";
 import { Row, Toast } from "react-bootstrap";
-// import ToastContainer from "react-bootstrap/ToastContainer";
+// import ToastContainer from 'react-bootstrap/ToastContainer';
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
-// import { MdOutlineErrorOutline } from "react-icons/md";
+import { MdErrorOutline } from "react-icons/md";
 
 import { VscChromeClose } from "react-icons/vsc";
+import { Redirect } from "react-router-dom";
 
 const CustomToastContainer = ({
   showToast,
@@ -16,6 +17,7 @@ const CustomToastContainer = ({
     // <ToastContainer position="bottom-center">
     <>
       <Toast
+        position="bottom-center"
         show={showToast}
         onClose={() => setShowToast(false)}
         delay={3000}
@@ -26,7 +28,11 @@ const CustomToastContainer = ({
       >
         <Toast.Body>
           <Row>
-            {type === "success" ? <IoCheckmarkCircleOutline /> : ""}
+            {type === "success" ? (
+              <IoCheckmarkCircleOutline />
+            ) : (
+              <MdErrorOutline />
+            )}
             {message}
             <VscChromeClose
               onClick={() => setShowToast(false)}
@@ -36,7 +42,7 @@ const CustomToastContainer = ({
         </Toast.Body>
       </Toast>
     </>
-    // {/* </ToastContainer> */}
+    // </ToastContainer>
   );
 };
 

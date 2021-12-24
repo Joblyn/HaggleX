@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Form from "../../Components/Form";
 import "./style.css";
 import CarouselContainer from "../../Components/Carousel";
 import { gql, useMutation } from "@apollo/client";
 import { useHistory } from "react-router-dom";
 import CustomToastContainer from "../../Components/Toast";
+import { Redirect } from "react-router-dom";
 
 const SIGNUP_MUTATION = gql`
   mutation registerUser(
@@ -75,7 +76,7 @@ export default function SignUp() {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/
     );
     const phonenumberRegex = RegExp(/@"^\d{10}$"/);
-a
+
     if (target.name === "email") {
       target.value !== ""
         ? target.value.match(emailRegex)
@@ -103,6 +104,7 @@ a
   };
 
   const history = useHistory();
+  const [register, newUser] = useMutation(SIGNUP_MUTATION);
   const handleSubmit = (e) => {
     e.preventDefault();
     register({
@@ -115,22 +117,28 @@ a
         currency: control.currency
       }
     });
-  };
 
-  const [register, newUser] = useMutation(SIGNUP_MUTATION);
-  if (newUser.loading) {
-    setLoading(newUser.loading);
-  } else {
-    setLoading(false);
-  }
-  if (newUser.error) {
-    console.log("error", newUser.error);
-    setError(newUser.error.message);
-  }
-  if (newUser.data) {
-    setShowToast(true);
-    history.push("/verify");
-  }
+    if (newUser.loading) {
+      setLoading(newUser.loading);
+    } else {
+      setLoading(false);
+    }
+    if (newUser.error) {
+      console.log("error", newUser.error);
+      setError(newUser.error.message);
+    }
+    if (newUser.data) {
+      setShowToast(true);
+      setTimeout(() => <Redirect
+      to={{
+        pathname: "/verify",
+        state: { 
+          email: control.email
+         }
+      }}
+    /> , 3000);
+    }
+  };
 
   return (
     <div id="signup" className="signup_container d-flex flex-row">
@@ -149,12 +157,12 @@ a
               name="email"
               placeholder="example@gmail.com"
             />
-            {/* {(invalidEmail || emptyEmailField) && (
+            {(invalidEmail || emptyEmailField) && (
               <Form.Error>
                 {(invalidEmail && "Invalid email") ||
                   (emptyEmailField && "Field cannot be empty")}
               </Form.Error>
-            )} */}
+            )}
           </Form.Group>
           <Form.Group>
             <Form.Label>Password</Form.Label>
@@ -164,13 +172,13 @@ a
               name="password"
               placeholder="*************"
             />
-            {/* {(invalidPassword || emptyPasswordField) && (
+            {(invalidPassword || emptyPasswordField) && (
               <Form.Error>
                 {(invalidPassword &&
                   "Password must be at least 8 characters long, must contain uppercase, must contain symbol.") ||
                   (emptyPasswordField && "Field cannot be empty")}
               </Form.Error>
-            )} */}
+            )}
           </Form.Group>
           <Form.Group>
             <Form.Label>Create username</Form.Label>
